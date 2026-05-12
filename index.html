@@ -42,6 +42,7 @@ th, td{
     border:1px solid black;
     padding:8px;
     font-size:14px;
+    text-align:center;
 }
 
 th{
@@ -101,19 +102,22 @@ tfoot td{
 
 <script>
 
-// GOOGLE SHEET CSV LINK
-const sheetURL =
-'https://docs.google.com/spreadsheets/d/1LjB2w5VVkYn_QX7tSnSSoQJCXT_LsZ7T4rMrMKTpz7M/edit?gid=940084714#gid=940084714';
-
 document.getElementById('date').innerText =
 new Date().toLocaleDateString('nl-NL');
 
+// CSV publicatie URL
+const csvUrl =
+'https://docs.google.com/spreadsheets/d/e/2PACX-1vS5OOF0w8wQVFfJqfmxKF8UkFU7KXMNjLjjTqHlj0fOasyGTtAmUeFpatmBdy5YPbSt_mTWCcAR9ZhW/pub?gid=940084714&single=true&output=csv';
+
 async function loadData(){
 
-    const response = await fetch(sheetURL);
+    const response = await fetch(csvUrl);
     const csv = await response.text();
 
-    const rows = csv.trim().split('\n').map(r => r.split(','));
+    const rows = csv
+        .trim()
+        .split('\n')
+        .map(r => r.split(','));
 
     const tbody = document.getElementById('tableBody');
 
@@ -121,14 +125,19 @@ async function loadData(){
     let totalPersons = 0;
     let totalChildren = 0;
 
-    // eerste regel overslaan (headers)
-    rows.slice(1).forEach(row => {
+    // Eerste 4 rijen overslaan
+    rows.slice(4).forEach(row => {
+
+        if(row.length < 5) return;
 
         const arrival = row[0];
         const name = row[1];
         const nights = parseInt(row[2]) || 0;
         const persons = parseInt(row[3]) || 0;
         const children = parseInt(row[4]) || 0;
+
+        // lege regels overslaan
+        if(!arrival && !name) return;
 
         const tr = document.createElement('tr');
 
