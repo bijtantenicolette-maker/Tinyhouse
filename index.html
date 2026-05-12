@@ -126,7 +126,7 @@ async function loadData(){
     let totalChildren = 0;
 
     // Eerste 4 rijen overslaan
-    rows.slice(4).forEach(row => {
+rows.slice(4, -1).forEach(row => {
 
         if(row.length < 5) return;
 
