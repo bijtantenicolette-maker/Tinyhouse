@@ -1,1 +1,160 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Reserveringslijst</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f2f2f2;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border:1px solid #ccc;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:5px;
+}
+
+.printdate{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th, td{
+    border:1px solid black;
+    padding:8px;
+    font-size:14px;
+}
+
+th{
+    background:#d9edf7;
+}
+
+td:nth-child(2){
+    text-align:left;
+}
+
+tfoot td{
+    font-weight:bold;
+    background:#efefef;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>RESERVERINGSLIJST</h1>
+
+    <div class="printdate">
+        Afdrukdatum:
+        <span id="date"></span>
+    </div>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Aankomst</th>
+                <th>Naam</th>
+                <th>Nachten</th>
+                <th>Personen</th>
+                <th>Kinderen</th>
+            </tr>
+        </thead>
+
+        <tbody id="tableBody"></tbody>
+
+        <tfoot>
+            <tr>
+                <td>Totaal</td>
+                <td></td>
+                <td id="totalNights">0</td>
+                <td id="totalPersons">0</td>
+                <td id="totalChildren">0</td>
+            </tr>
+        </tfoot>
+
+    </table>
+
+</div>
+
+<script>
+
+// GOOGLE SHEET CSV LINK
+const sheetURL =
+'https://docs.google.com/spreadsheets/d/1LjB2w5VVkYn_QX7tSnSSoQJCXT_LsZ7T4rMrMKTpz7M/export?format=csv&gid=0';
+
+document.getElementById('date').innerText =
+new Date().toLocaleDateString('nl-NL');
+
+async function loadData(){
+
+    const response = await fetch(sheetURL);
+    const csv = await response.text();
+
+    const rows = csv.trim().split('\n').map(r => r.split(','));
+
+    const tbody = document.getElementById('tableBody');
+
+    let totalNights = 0;
+    let totalPersons = 0;
+    let totalChildren = 0;
+
+    // eerste regel overslaan (headers)
+    rows.slice(1).forEach(row => {
+
+        const arrival = row[0];
+        const name = row[1];
+        const nights = parseInt(row[2]) || 0;
+        const persons = parseInt(row[3]) || 0;
+        const children = parseInt(row[4]) || 0;
+
+        const tr = document.createElement('tr');
+
+        tr.innerHTML = `
+            <td>${arrival}</td>
+            <td>${name}</td>
+            <td>${nights}</td>
+            <td>${persons}</td>
+            <td>${children}</td>
+        `;
+
+        tbody.appendChild(tr);
+
+        totalNights += nights;
+        totalPersons += persons;
+        totalChildren += children;
+    });
+
+    document.getElementById('totalNights').innerText = totalNights;
+    document.getElementById('totalPersons').innerText = totalPersons;
+    document.getElementById('totalChildren').innerText = totalChildren;
+}
+
+loadData();
+
+</script>
+
+</body>
+</html>
