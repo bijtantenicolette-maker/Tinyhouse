@@ -62,7 +62,21 @@ tfoot td{
 </head>
 
 <body>
+    
+<script>
 
+const wachtwoord = "tinytante";
+
+const invoer = prompt("Voer wachtwoord in:");
+
+if(invoer !== wachtwoord){
+    document.body.innerHTML = "<h1>Geen toegang</h1>";
+    throw new Error("Toegang geweigerd");
+}
+
+</script>
+
+    
 <div class="container">
 
     <h1>RESERVERINGSLIJST</h1>
